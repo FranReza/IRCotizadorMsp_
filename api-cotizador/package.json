@@ -1,0 +1,24 @@
+{
+  "name": "api-cotizador",
+  "version": "1.0.0",
+  "description": "api con conexion a microsip 2021 y firebird 3.0 con node-firebird",
+  "main": "index.js",
+  "scripts": {
+    "start" : "nodemon ./index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "node-firebird",
+    "firebird",
+    "sql"
+  ],
+  "author": "fran reza",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "node-firebird": "^1.1.5",
+    "nodemon": "^2.0.22"
+  }
+}
