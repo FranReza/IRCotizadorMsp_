@@ -39,8 +39,8 @@ function App() {
           </div>
         </div>
       </div>
-      <div className="flex flex-row h-screen/2">
-        <div class="mt-1 mx-3 bg-white rounded-lg shadow-lg p-4 w-3/4 overflow-y-scroll" style={{maxHeight: "400px"}}>
+      <div className="flex flex-row">
+        <div class="mt-1 mx-3 bg-white rounded-lg shadow-lg p-4 w-3/4 overflow-y-scroll" style={{maxHeight: "300px"}}>
           <table class="w-full table-auto">
             <thead>
               <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
@@ -102,38 +102,8 @@ function App() {
                   </button>
                 </td>
               </tr>
-              <tr class="border-b border-gray-200 hover:bg-gray-100">
-                <td class="py-3 px-6 text-left whitespace-nowrap">3</td>
-                <td class="py-3 px-6 text-left whitespace-nowrap">Zapatos</td>
-                <td class="py-3 px-6 text-center whitespace-nowrap">$50</td>
-                <td class="py-3 px-6 text-center whitespace-nowrap">1</td>
-                <td class="py-3 px-6 text-center whitespace-nowrap">$50</td>
-                <td class="py-3 px-6 text-center whitespace-nowrap">$50</td>
-                <td class="text-left py-3 px-4">
-                  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-1">
-                    Editar
-                  </button>
-                  <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
-              <tr class="border-b border-gray-200 hover:bg-gray-100">
-                <td class="py-3 px-6 text-left whitespace-nowrap">3</td>
-                <td class="py-3 px-6 text-left whitespace-nowrap">Zapatos</td>
-                <td class="py-3 px-6 text-center whitespace-nowrap">$50</td>
-                <td class="py-3 px-6 text-center whitespace-nowrap">1</td>
-                <td class="py-3 px-6 text-center whitespace-nowrap">$50</td>
-                <td class="py-3 px-6 text-center whitespace-nowrap">$50</td>
-                <td class="text-left py-3 px-4">
-                  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-1">
-                    Editar
-                  </button>
-                  <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-                    Eliminar
-                  </button>
-                </td>
-              </tr>
+              
+              
 
             </tbody>
           </table>
