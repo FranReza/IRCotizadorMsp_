@@ -23,6 +23,6 @@ const CotizacionesIndex = () => {
       </div>
     </Fragment>
   );
-};
+}; 
 
 export default CotizacionesIndex;

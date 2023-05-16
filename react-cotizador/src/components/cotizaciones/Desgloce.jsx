@@ -21,6 +21,6 @@ const Desgloce = () => {
             </div>
         </Fragment>
     );
-};
+}; 
 
 export default Desgloce;

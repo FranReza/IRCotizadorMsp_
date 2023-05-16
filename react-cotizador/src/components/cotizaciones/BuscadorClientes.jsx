@@ -21,6 +21,6 @@ const BuscadorClientes = () => {
             </div>
         </Fragment>
     );
-};
+}; 
 
 export default BuscadorClientes;

@@ -42,7 +42,7 @@ const TablaProductos = () => {
                 <button onClick={AbrirModalArticulos}>Agregar Partida</button>
 
                 {ModalArticulos &&
-                    (
+                    ( 
                         <Modal
                             isOpen={ModalArticulos}
                             onRequestClose={CerrarModalArticulos}
