@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { Link } from "react-router-dom";
 
 const Header = () => {
     return (
@@ -8,9 +9,9 @@ const Header = () => {
                 <div className="flex justify-end">
                     <nav>
                         <ul>
-                            <li><a href="#">Alta de Clientes</a></li>
-                            <li><a href="#">Ver Clientes</a></li>
-                            <li><a href="#">Hacer cotización</a></li>
+                            <Link to={"/nuevo-cliente"}>Alta de Clientes</Link>
+                            <Link to={"/visor-clientes"}>Ver Clientes</Link>
+                            <Link to={"/"}>Hacer Cotización</Link>
                         </ul>
                     </nav>
                 </div>
