@@ -1,6 +1,6 @@
 const consultas = {
 
-    buscarClientesPorNombre : `SELECT 
+    buscarClientesPorNombre: `SELECT 
 	c.CLIENTE_ID,
 	c.NOMBRE AS NOMBRE_CLIENTE,
 	m.MONEDA_ID,
@@ -12,7 +12,13 @@ const consultas = {
     LEFT JOIN CONDICIONES_PAGO cp ON c.COND_PAGO_ID = cp.COND_PAGO_ID
     WHERE c.NOMBRE LIKE ?
     `,
-    
+
+    buscarArticuloPorNombre: `
+    SELECT a.ARTICULO_ID,
+	a.NOMBRE
+    FROM ARTICULOS a
+    `,
+
 
 };
 

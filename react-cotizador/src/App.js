@@ -16,6 +16,7 @@ function App() {
         <Routes>
           <Route path="/" element={<CotizacionesIndex />} />
           <Route path="/nuevo-cliente" element={<ClientesIndex />} />
+          <Route path=""/>
         </Routes>
       </Fragment>
     </Router>

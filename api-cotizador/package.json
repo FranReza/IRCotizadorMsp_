@@ -4,8 +4,7 @@
   "description": "api con conexion a microsip 2021 y firebird 3.0 con node-firebird",
   "main": "index.js",
   "scripts": {
-    "start" : "nodemon ./index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon ./index.js"
   },
   "keywords": [
     "nodejs",

@@ -1,6 +1,12 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 
 const FechasCotizacion = () => {
+
+    const [fechas, setfechas] = useState({
+        fecha_doc : '00/00/0000',
+        fecha_vencimiento : '00/00/0000',
+    });
+
     return (
         <Fragment>
             <div className="w-4/12 h-50">
