@@ -3,7 +3,7 @@ const dbconfig = require('../database/config');
 const consultas = require('../database/consultas')
 
 const buscarCliente = (req, res) => {
-    const  nombre  = req.query.nombre;
+    const  nombre  = req.query.query;
     Firebird.attach(dbconfig, function (err, db) {
 
         if(err){
@@ -16,7 +16,7 @@ const buscarCliente = (req, res) => {
                 console.log('error al tratar de consultar el cliente');
             }
 
-            res.status(200).json({ result });
+            res.status(200).send(result);
 
             db.detach();
         });

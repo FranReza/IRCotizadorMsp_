@@ -1,8 +1,11 @@
 import React, { Fragment, useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
-const TablaProductos = () => {
+
+
+const TablaProductos = ( {onClienteActivo} ) => {
 
     //estados
     //use state para todos los articulos y modal de los articulos
@@ -13,18 +16,40 @@ const TablaProductos = () => {
     const [selectedArticulo, setSelectedArticulo] = useState(null);
 
     //funciones que interactuan con mis estados
-    const AbrirModalArticulos = () => { setModalArticulos(true); }
+    const AbrirModalArticulos = () => { 
+        if(onClienteActivo){
+        setModalArticulos(true); 
+        } else {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                  toast.addEventListener('mouseenter', Swal.stopTimer)
+                  toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+              })
+              
+              Toast.fire({
+                icon: 'error',
+                title: 'Selecciona un cliente antes de agregar una partida'
+              })
+        }
+    }
     const CerrarModalArticulos = () => { setModalArticulos(false); }
 
     const AxiosbuscarArticulos = async (e) => {
         const query = e.target.value;
-        if (query != '') {
+        if (query !== '') {
             setbuscarArticulos(query);
 
             try {
                 const response = await axios.get(`http://localhost:5000/buscar-articulo?query=${query}`);
 
                 if (response) {
+                    console.log(response.data);
                     setResultadosArticulos(response.data);
                     setShowResultadosArticulos(true);
                 } else {
@@ -34,7 +59,6 @@ const TablaProductos = () => {
             } catch (error) {
                 console.log(error);
             }
-            console.log(resultadosArticulos);
         } else {
             setShowResultadosArticulos(false);
             setbuscarArticulos('');
@@ -43,7 +67,12 @@ const TablaProductos = () => {
     }
 
     const handleSelectorArticulos = (articulo) => {
-        setSelectedArticulo(articulo);
+        setSelectedArticulo({
+            ARTICULO_ID : articulo.ARTICULO_ID,
+            CLAVE_ARTICULO : articulo.CLAVE_ARTICULO,
+            NOMBRE_ARTICULO: articulo.NOMBRE_ARTICULO,
+            UNIDAD_VENTA: articulo.UNIDAD_VENTA,
+        });
         setShowResultadosArticulos(false);
         setbuscarArticulos('');
     };
@@ -114,7 +143,7 @@ const TablaProductos = () => {
                                                         key={resultado.ARTICULO_ID}
                                                         className="py-2 px-4 cursor-pointer"
                                                         onClick={() => handleSelectorArticulos(resultado)}>
-                                                        {resultado.NOMBRE}
+                                                        {resultado.NOMBRE_ARTICULO}
                                                     </span>
                                                 ))}
                                             </li>
@@ -125,6 +154,8 @@ const TablaProductos = () => {
                                     <label className="block mb-2">Nombre del articulo:</label>
                                     <input
                                         type="text"
+                                        value={selectedArticulo ? selectedArticulo.NOMBRE_ARTICULO : ""}
+                                        onChange={(e) => setSelectedArticulo({...selectedArticulo, NOMBRE_ARTICULO: e.target.value})}
                                         className="border border-gray-300 px-4 py-2 w-full"
                                     />
                                 </div>
@@ -151,7 +182,16 @@ const TablaProductos = () => {
                                         />
                                     </div>
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <label className="block mb-2">U.Medida:</label>
+                                        <input
+                                            type="text"
+                                            value={selectedArticulo ? selectedArticulo.UNIDAD_VENTA : ""}
+                                            onChange={(e) => setSelectedArticulo({ ...selectedArticulo, UNIDAD_VENTA: e.target.value })}
+                                            className="border border-gray-300 px-4 py-2 w-full"
+                                        />
+                                    </div>
                                     <div>
                                         <label className="block mb-2">Cantidad:</label>
                                         <input
@@ -160,7 +200,23 @@ const TablaProductos = () => {
                                         />
                                     </div>
                                     <div>
+                                        <label className="block mb-2">Descuento:</label>
+                                        <input
+                                            type="text"
+                                            className="border border-gray-300 px-4 py-2 w-full"
+                                        />
+                                    </div>
+                                </div>
+                                <div className='grid grid-cols-2 gap-4'>
+                                    <div>
                                         <label className="block mb-2">Precio:</label>
+                                        <input
+                                            type="text"
+                                            className="border border-gray-300 px-4 py-2 w-full"
+                                        />
+                                    </div>
+                                    <div>
+                                        <label className="block mb-2">Importe Total:</label>
                                         <input
                                             type="text"
                                             className="border border-gray-300 px-4 py-2 w-full"
