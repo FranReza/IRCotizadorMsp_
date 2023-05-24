@@ -66,7 +66,7 @@ const TablaProductos = ( {onClienteActivo} ) => {
 
     }
 
-    const handleSelectorArticulos = (articulo) => {
+    const handleSelectorArticulos = async (articulo) => {
         setSelectedArticulo({
             ARTICULO_ID : articulo.ARTICULO_ID,
             CLAVE_ARTICULO : articulo.CLAVE_ARTICULO,
@@ -75,6 +75,7 @@ const TablaProductos = ( {onClienteActivo} ) => {
         });
         setShowResultadosArticulos(false);
         setbuscarArticulos('');
+        
     };
 
 
@@ -242,9 +243,9 @@ const TablaProductos = ( {onClienteActivo} ) => {
                         <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
                             <th class="py-3 px-6 text-left">ID</th>
                             <th class="py-3 px-6 text-left">Nombre del Artículo</th>
-                            <th class="py-3 px-6 text-center">Precio</th>
-                            <th class="py-3 px-6 text-center">Unidades</th>
-                            <th class="py-3 px-6 text-center">Costo</th>
+                            <th class="py-3 px-6 text-center">Ancho</th>
+                            <th class="py-3 px-6 text-center">Alto</th>
+                            <th class="py-3 px-6 text-center">M&sup2;</th>
                             <th class="py-3 px-6 text-center">Total</th>
                             <th class="py-3 px-6 text-center">Acciones</th>
                         </tr>
@@ -266,38 +267,9 @@ const TablaProductos = ( {onClienteActivo} ) => {
                                 </button>
                             </td>
                         </tr>
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">2</td>
-                            <td class="py-3 px-6 text-left whitespace-nowrap">Pantalón</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">$35</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">1</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">$35</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">$35</td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-1">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">3</td>
-                            <td class="py-3 px-6 text-left whitespace-nowrap">Zapatos</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">$50</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">1</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">$50</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">$50</td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-1">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </button>
-                                <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
+
+                        
+                        
                     </tbody>
                 </table>
             </div>

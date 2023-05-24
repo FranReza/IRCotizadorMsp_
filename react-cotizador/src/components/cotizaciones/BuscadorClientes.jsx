@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import axios from 'axios';
+import { useClienteStore } from '../../store/clienteStore';
 
 
 const BuscadorClientes = ({ onClienteActivo }) => {
