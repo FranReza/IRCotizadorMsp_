@@ -10,6 +10,6 @@ router.get('/', (req, res) => {
 
 router.get('/buscar-cliente', clientesController.buscarCliente);
 router.get('/buscar-articulo', articulosController.buscarArticulo);
-
+router.get('/precio-articulo', articulosController.getPrecioArticuloCliente);
 
 module.exports = router;

@@ -21,6 +21,8 @@ const consultas = {
     ba.NOMBRE_ARTICULO,
     ba.UNIDAD_VENTA
     FROM BUSCA_ARTICULOS('NOMBRE', 'S', 'S', ?, NULL) ba;`,
+
+    buscarPrecioArticuloCliente : `EXECUTE PROCEDURE GET_PRECIO_ARTCLI(?, ?, '01-01-1000', 0);`,
 };
 
 module.exports = consultas;

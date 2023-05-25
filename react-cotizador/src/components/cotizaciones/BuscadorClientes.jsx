@@ -4,6 +4,9 @@ import { useClienteStore } from '../../store/clienteStore';
 
 
 const BuscadorClientes = ({ onClienteActivo }) => {
+    //usamos la libreria de zustand para lograr esta parte
+    const setClienteZustand = useClienteStore((state) => state.setCliente);
+
     const [busquedaClientes, setBusquedaClientes] = useState('');
     const [resultadosClientes, setResultadosClientes] = useState([]);
     const [showResultadosClientes, setShowResultadosClientes] = useState(false);
@@ -29,7 +32,12 @@ const BuscadorClientes = ({ onClienteActivo }) => {
     };
 
     const handleSeleccionarCliente = (cliente) => {
+        
         setClienteSeleccionado(cliente);
+
+        //aqui metemos lo nuevo de zustand
+        setClienteZustand(cliente);
+
         setShowResultadosClientes(false);
         setBusquedaClientes('');
         onClienteActivo(true); //aqui esta para validar
