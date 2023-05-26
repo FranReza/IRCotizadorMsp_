@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState } from 'react';
 import Modal from 'react-modal';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -36,15 +36,90 @@ const TablaProductos = ({ onClienteActivo }) => {
         NOTAS: ''
     });
 
-    useEffect(() => {
-        console.log(articuloDetalle);
-    }, [articuloDetalle]);
+    const handleAnchoChange = (e) => {
+        const value = e.target.value.trim(); // Eliminar espacios en blanco al principio y al final
 
-    const calcularMcuadrado = () => {
-        const ancho = articuloDetalle.ANCHO >= 1 ? articuloDetalle.ANCHO : 1;
-        const alto = articuloDetalle.ALTO >= 1 ? articuloDetalle.ALTO : 1;
-        return ancho * alto;
+        if (value === '0' || value === '.') {
+            // Si el valor es vacío, 0 o ".", establecer el valor en 1
+            setArticuloDetalle((prevDetalle) => ({
+                ...prevDetalle,
+                ANCHO: '1',
+                MCUADRADO: 'N/V'
+            }));
+        } else {
+            const newCuadrado = (parseFloat(value) * parseFloat(articuloDetalle.ALTO)).toFixed(2);
+
+            if (!isNaN(newCuadrado)) {
+                // Si el valor es válido, actualizar el estado
+                setArticuloDetalle((prevDetalle) => ({
+                    ...prevDetalle,
+                    ANCHO: value,
+                    MCUADRADO: newCuadrado,
+                    IMPUESTOS: ((newCuadrado * prevDetalle.PRECIO) * 0.16).toFixed(2),
+                    TOTAL: (newCuadrado * prevDetalle.PRECIO).toFixed(2)
+                }));
+            } else { 
+                setArticuloDetalle((prevDetalle) => ({
+                    ...prevDetalle,
+                    ANCHO: value,
+                    MCUADRADO: 0,
+                }));
+            }
+        }
+        
+        console.log(articuloDetalle);
     };
+
+    const handleAltoChange = (e) => {
+        const value = e.target.value.trim(); // Eliminar espacios en blanco al principio y al final
+
+        if (value === '0' || value === '.') {
+            // Si el valor es vacío, 0 o ".", establecer el valor en 1
+            setArticuloDetalle((prevDetalle) => ({
+                ...prevDetalle,
+                ALTO: '1',
+                MCUADRADO: 'N/V'
+            }));
+        } else {
+
+            const newCuadrado = (parseFloat(value) * parseFloat(articuloDetalle.ANCHO)).toFixed(2);
+            if (!isNaN(newCuadrado)) {
+                // Si el valor es válido, actualizar el estado
+                setArticuloDetalle((prevDetalle) => ({
+                    ...prevDetalle,
+                    ALTO: value,
+                    MCUADRADO: newCuadrado,
+                    IMPUESTOS: ((newCuadrado * prevDetalle.PRECIO) * 0.16).toFixed(2),
+                    TOTAL: (newCuadrado * prevDetalle.PRECIO).toFixed(2)
+                }));
+            } else {
+                setArticuloDetalle((prevDetalle) => ({
+                    ...prevDetalle,
+                    ALTO: value,
+                    MCUADRADO: 0,
+                }));
+            }
+
+
+        }
+        console.log(articuloDetalle);
+    };
+
+    const handleCantidadChange = (e) => {
+        const newCantidad = parseInt(e.target.value);
+        const newTotal = (newCantidad * articuloDetalle.TOTAL).toFixed(2); // Realizar la multiplicación
+        console.log(newTotal);
+        const newImpuesto = ((newTotal * 0.16) * newCantidad);
+
+        setArticuloDetalle((prevDetalle) => ({
+          ...prevDetalle,
+          IMPUESTOS : newImpuesto,
+          CANTIDAD: newCantidad,
+          TOTAL: newTotal,
+        }));
+
+        
+      };
 
 
     //funciones que interactuan con mis estados
@@ -116,6 +191,7 @@ const TablaProductos = ({ onClienteActivo }) => {
             );
             if (response) {
                 const { PRECIO_UNITARIO, IVA, TOTAL } = response.data;
+
                 setArticuloDetalle({
                     ...articuloDetalle,
                     ARTICULO_ID: articulo.ARTICULO_ID,
@@ -126,8 +202,9 @@ const TablaProductos = ({ onClienteActivo }) => {
                     CANTIDAD: 1,
                     PRECIO: PRECIO_UNITARIO,
                     IMPUESTOS: IVA,
-                    TOTAL: TOTAL,
+                    TOTAL: (TOTAL - (PRECIO_UNITARIO * 0.16)).toFixed(2),
                 });
+
             }
         } catch (error) {
             console.log(error);
@@ -135,7 +212,6 @@ const TablaProductos = ({ onClienteActivo }) => {
         setShowResultadosArticulos(false);
         setbuscarArticulos('');
     };
-
 
     const EstilosModal = {
         content: {
@@ -164,7 +240,7 @@ const TablaProductos = ({ onClienteActivo }) => {
 
     return (
         <Fragment>
-            <div class="mt-1 mx-3 bg-white rounded-lg shadow-lg p-4 w-3/4 overflow-y-scroll" style={{ maxHeight: "300px" }}>
+            <div className="mt-1 mx-3 bg-white rounded-lg shadow-lg p-4 w-3/4 overflow-y-scroll" style={{ maxHeight: "300px" }}>
                 <button onClick={AbrirModalArticulos}>Agregar Partida</button>
 
                 {ModalArticulos &&
@@ -223,67 +299,32 @@ const TablaProductos = ({ onClienteActivo }) => {
                                         <label className="block mb-2">Ancho:</label>
                                         <input
                                             type="text"
+                                            onChange={handleAnchoChange}
                                             value={articuloDetalle ? articuloDetalle.ANCHO : ''}
-                                            onChange={(e) => {
-                                                const newAncho = parseFloat(e.target.value.replace(',', '.'));
-                                                const newMCuadrado = isNaN(newAncho) ? 0 : newAncho * articuloDetalle.ALTO;
-                                                setArticuloDetalle({
-                                                    ...articuloDetalle,
-                                                    ANCHO: newAncho,
-                                                    MCUADRADO: newMCuadrado,
-                                                });
-                                            }}
-                                            onKeyDown={(e) => {
-                                                if (e.key === 'Decimal' && !e.target.value.includes('.')) {
-                                                    e.preventDefault();
-                                                    const caretPosition = e.target.selectionStart;
-                                                    e.target.value = e.target.value.slice(0, caretPosition) + '.' + e.target.value.slice(caretPosition);
-                                                    e.target.setSelectionRange(caretPosition + 1, caretPosition + 1);
-                                                }
-                                            }}
                                             className="border border-gray-300 px-4 py-2 w-full"
                                         />
                                     </div>
-
-
 
                                     <div>
                                         <label className="block mb-2">Alto:</label>
                                         <input
                                             type="text"
+                                            onChange={handleAltoChange}
                                             value={articuloDetalle ? articuloDetalle.ALTO : ''}
-                                            onChange={(e) => {
-                                                const newAlto = parseFloat(e.target.value.replace(',', '.'));
-                                                const newMCuadrado = isNaN(newAlto) ? 0 : articuloDetalle.ANCHO * newAlto;
-                                                setArticuloDetalle({
-                                                    ...articuloDetalle,
-                                                    ALTO: newAlto,
-                                                    MCUADRADO: newMCuadrado,
-                                                });
-                                            }}
-                                            onKeyDown={(e) => {
-                                                if (e.key === ',' && !e.target.value.includes('.')) {
-                                                    e.target.value += '.';
-                                                    e.preventDefault();
-                                                }
-                                            }}
                                             className="border border-gray-300 px-4 py-2 w-full"
                                         />
                                     </div>
-
 
                                     <div>
                                         <label className="block mb-2">M&sup2;:</label>
                                         <input
                                             type="text"
                                             value={articuloDetalle ? articuloDetalle.MCUADRADO : 0}
-                                            onChange={(e) =>
-                                                setArticuloDetalle({ ...articuloDetalle, MCUADRADO: e.target.value })
-                                            }
                                             className="border border-gray-300 px-4 py-2 w-full"
                                             disabled
                                         />
                                     </div>
+
                                 </div>
 
                                 <div className="grid grid-cols-3 gap-4">
@@ -292,24 +333,25 @@ const TablaProductos = ({ onClienteActivo }) => {
                                         <input
                                             type="text"
                                             value={selectedArticulo ? selectedArticulo.UNIDAD_VENTA : ""}
-                                            onChange={(e) => setSelectedArticulo({ ...selectedArticulo, UNIDAD_VENTA: e.target.value })}
                                             className="border border-gray-300 px-4 py-2 w-full"
+                                            disabled
                                         />
                                     </div>
                                     <div>
                                         <label className="block mb-2">Cantidad:</label>
                                         <input
-                                            type="text"
-                                            value={articuloDetalle ? articuloDetalle.CANTIDAD : 0}
-                                            onChange={(e) => setArticuloDetalle({ ...articuloDetalle, CANTIDAD: e.target.value })}
+                                            type="number"
+                                            value={articuloDetalle ? articuloDetalle.CANTIDAD : ""}
+                                            onChange={(e) => handleCantidadChange(e)}
                                             className="border border-gray-300 px-4 py-2 w-full"
+                                            min="1"
                                         />
+
                                     </div>
                                     <div>
                                         <label className="block mb-2">Descuento:</label>
                                         <input
                                             value={articuloDetalle ? articuloDetalle.DESCTO : 0}
-                                            onChange={(e) => setArticuloDetalle({ ...articuloDetalle, DESCTO: e.target.value })}
                                             type="text"
                                             className="border border-gray-300 px-4 py-2 w-full"
                                         />
@@ -317,23 +359,23 @@ const TablaProductos = ({ onClienteActivo }) => {
                                 </div>
                                 <div className='grid grid-cols-2 gap-4'>
                                     <div>
-                                        <label className="block mb-2">Precio:</label>
+                                        <label className="block mb-2">Precio unitario:</label>
                                         <input
                                             type="text"
                                             value={articuloDetalle ? articuloDetalle.PRECIO : 0}
-                                            onChange={(e) => setArticuloDetalle({ ...articuloDetalle, PRECIO: e.target.value })}
                                             className="border border-gray-300 px-4 py-2 w-full"
+                                            disabled
                                         />
                                     </div>
                                     <div>
                                         <label className="block mb-2">Importe Total:</label>
                                         <input
                                             type="text"
-                                            value={articuloDetalle ? articuloDetalle.PRECIO : 0}
-                                            onChange={(e) => setArticuloDetalle({ ...articuloDetalle, PRECIO: e.target.value })}
+                                            value={articuloDetalle ? articuloDetalle.TOTAL : ""}
                                             className="border border-gray-300 px-4 py-2 w-full"
                                         />
                                     </div>
+
                                 </div>
 
                                 <div className="mb-4">
@@ -349,32 +391,32 @@ const TablaProductos = ({ onClienteActivo }) => {
                         </Modal>
 
                     )}
-                <table class="w-full table-auto">
+                <table className="w-full table-auto">
                     <thead>
-                        <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
-                            <th class="py-3 px-6 text-left">ID</th>
-                            <th class="py-3 px-6 text-left">Nombre del Artículo</th>
-                            <th class="py-3 px-6 text-center">Ancho</th>
-                            <th class="py-3 px-6 text-center">Alto</th>
-                            <th class="py-3 px-6 text-center">M&sup2;</th>
-                            <th class="py-3 px-6 text-center">Total</th>
-                            <th class="py-3 px-6 text-center">Acciones</th>
+                        <tr className="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                            <th className="py-3 px-6 text-left">ID</th>
+                            <th className="py-3 px-6 text-left">Nombre del Artículo</th>
+                            <th className="py-3 px-6 text-center">Ancho</th>
+                            <th className="py-3 px-6 text-center">Alto</th>
+                            <th className="py-3 px-6 text-center">M&sup2;</th>
+                            <th className="py-3 px-6 text-center">Total</th>
+                            <th className="py-3 px-6 text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody class="text-gray-600 text-sm font-light">
-                        <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="py-3 px-6 text-left whitespace-nowrap">1</td>
-                            <td class="py-3 px-6 text-left whitespace-nowrap">Camiseta</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">$15</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">2</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">$30</td>
-                            <td class="py-3 px-6 text-center whitespace-nowrap">$60</td>
-                            <td class="py-3 px-4 text-center">
-                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-1">
-                                    <i class="fa-solid fa-pen-to-square"></i>
+                    <tbody className="text-gray-600 text-sm font-light">
+                        <tr className="border-b border-gray-200 hover:bg-gray-100">
+                            <td className="py-3 px-6 text-left whitespace-nowrap">1</td>
+                            <td className="py-3 px-6 text-left whitespace-nowrap">Camiseta</td>
+                            <td className="py-3 px-6 text-center whitespace-nowrap">$15</td>
+                            <td className="py-3 px-6 text-center whitespace-nowrap">2</td>
+                            <td className="py-3 px-6 text-center whitespace-nowrap">$30</td>
+                            <td className="py-3 px-6 text-center whitespace-nowrap">$60</td>
+                            <td className="py-3 px-4 text-center">
+                                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-1">
+                                    <i className="fa-solid fa-pen-to-square"></i>
                                 </button>
-                                <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
-                                    <i class="fa-solid fa-trash"></i>
+                                <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
+                                    <i className="fa-solid fa-trash"></i>
                                 </button>
                             </td>
                         </tr>
