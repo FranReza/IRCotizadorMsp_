@@ -58,7 +58,7 @@ const TablaProductos = ({ onClienteActivo }) => {
                     IMPUESTOS: ((newCuadrado * prevDetalle.PRECIO) * 0.16).toFixed(2),
                     TOTAL: (newCuadrado * prevDetalle.PRECIO).toFixed(2)
                 }));
-            } else { 
+            } else {
                 setArticuloDetalle((prevDetalle) => ({
                     ...prevDetalle,
                     ANCHO: value,
@@ -66,7 +66,7 @@ const TablaProductos = ({ onClienteActivo }) => {
                 }));
             }
         }
-        
+
         console.log(articuloDetalle);
     };
 
@@ -107,19 +107,54 @@ const TablaProductos = ({ onClienteActivo }) => {
 
     const handleCantidadChange = (e) => {
         const newCantidad = parseInt(e.target.value);
-        const newTotal = (newCantidad * articuloDetalle.TOTAL).toFixed(2); // Realizar la multiplicación
-        console.log(newTotal);
-        const newImpuesto = ((newTotal * 0.16) * newCantidad);
+        const ancho = parseFloat(articuloDetalle.ANCHO);
+        const alto = parseFloat(articuloDetalle.ALTO);
+        const precioUnitario = parseFloat(articuloDetalle.PRECIO);
+        const mcuadrado = (ancho * alto).toFixed(2);
+        const newTotal = (mcuadrado * newCantidad * precioUnitario).toFixed(2);
+        const newImpuesto = (newTotal * 0.16).toFixed(2);
 
         setArticuloDetalle((prevDetalle) => ({
-          ...prevDetalle,
-          IMPUESTOS : newImpuesto,
-          CANTIDAD: newCantidad,
-          TOTAL: newTotal,
+            ...prevDetalle,
+            IMPUESTOS: newImpuesto,
+            CANTIDAD: newCantidad,
+            TOTAL: newTotal,
+            MCUADRADO: mcuadrado,
         }));
+    };
 
-        
-      };
+    const handleDescuentoChange = (e) => {
+        const value = parseFloat(e.target.value);// este es el descuento
+        const newCantidad = parseInt(articuloDetalle.CANTIDAD);
+        const ancho = parseFloat(articuloDetalle.ANCHO);
+        const alto = parseFloat(articuloDetalle.ALTO);
+        const precioUnitario = parseFloat(articuloDetalle.PRECIO);
+        const mcuadrado = (ancho * alto).toFixed(2);
+        const newTotal = (mcuadrado * newCantidad * precioUnitario).toFixed(2);
+        const newImpuesto = (newTotal * 0.16).toFixed(2);
+
+        if (!isNaN(value) && value >= 0) { //si el valor es un numero real, por ejemplo 15 
+            const newDescuento = value;
+            const newTotalDsctoAplicado = (newTotal - (newTotal * (newDescuento / 100))).toFixed(2);
+            const newImpuestoDsctoAplicado = (newTotalDsctoAplicado * 0.16).toFixed(2);
+
+            setArticuloDetalle((prevDetalle) => ({
+                ...prevDetalle,
+                DESCTO: newDescuento,
+                TOTAL: newTotalDsctoAplicado,
+                IMPUESTOS: newImpuestoDsctoAplicado,
+            }));
+
+        } else {
+            setArticuloDetalle((prevDetalle) => ({
+                ...prevDetalle,
+                DESCTO: 0,
+                TOTAL: newTotal,
+                IMPUESTOS: newImpuesto,
+            }));
+        }
+    };
+
 
 
     //funciones que interactuan con mis estados
@@ -352,6 +387,7 @@ const TablaProductos = ({ onClienteActivo }) => {
                                         <label className="block mb-2">Descuento:</label>
                                         <input
                                             value={articuloDetalle ? articuloDetalle.DESCTO : 0}
+                                            onChange={(e) => handleDescuentoChange(e)}
                                             type="text"
                                             className="border border-gray-300 px-4 py-2 w-full"
                                         />
