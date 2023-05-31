@@ -1,7 +1,7 @@
 const dbconfig = {
     host: 'localhost',
     port: 3050,
-    database : 'C:\\Microsip datos 2021\\VAES PERSIANAS.FDB',
+    database : 'C:\\Microsip datos 2021\\PRUEBA.FDB',
     user: 'SYSDBA',
     password: 'masterkey',
     lowercase_keys: false,
@@ -10,6 +10,8 @@ const dbconfig = {
     retryConnectionInterval:1000,
     charset: 'ISO8859_1',
 };
+
+//teniamos en su momento VAES PERSIANAS PERO SE QUEDO EN MI OTRA PC XD
 
 
 module.exports =  dbconfig ;
