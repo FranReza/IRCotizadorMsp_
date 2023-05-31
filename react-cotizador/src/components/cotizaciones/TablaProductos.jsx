@@ -25,6 +25,7 @@ const TablaProductos = ({ onClienteActivo }) => {
     const [articuloDetalle, setArticuloDetalle] = useState({
         ARTICULO_ID: 0,
         CLAVE_ARTICULO: 0,
+        UNIDAD_VENTA : '',
         ANCHO: 0,
         ALTO: 0,
         MCUADRADO: 0,
@@ -155,6 +156,14 @@ const TablaProductos = ({ onClienteActivo }) => {
         }
     };
 
+    const handleNotasChange = (e) => {
+        const value = e.target.value;
+        setArticuloDetalle((prevDetalle) => ({
+            ...prevDetalle,
+            NOTAS : value,
+        }))
+      };
+
 
 
     //funciones que interactuan con mis estados
@@ -231,6 +240,7 @@ const TablaProductos = ({ onClienteActivo }) => {
                     ...articuloDetalle,
                     ARTICULO_ID: articulo.ARTICULO_ID,
                     CLAVE_ARTICULO: articulo.CLAVE_ARTICULO,
+                    UNIDAD_VENTA: articulo.UNIDAD_VENTA,
                     ANCHO: 1,
                     ALTO: 1,
                     MCUADRADO: 1,
@@ -238,6 +248,7 @@ const TablaProductos = ({ onClienteActivo }) => {
                     PRECIO: PRECIO_UNITARIO,
                     IMPUESTOS: IVA,
                     TOTAL: (TOTAL - (PRECIO_UNITARIO * 0.16)).toFixed(2),
+                    NOTAS: '',
                 });
 
             }
@@ -337,6 +348,7 @@ const TablaProductos = ({ onClienteActivo }) => {
                                             onChange={handleAnchoChange}
                                             value={articuloDetalle ? articuloDetalle.ANCHO : ''}
                                             className="border border-gray-300 px-4 py-2 w-full"
+                                            disabled={articuloDetalle.UNIDAD_VENTA === 'Pieza'}
                                         />
                                     </div>
 
@@ -347,6 +359,7 @@ const TablaProductos = ({ onClienteActivo }) => {
                                             onChange={handleAltoChange}
                                             value={articuloDetalle ? articuloDetalle.ALTO : ''}
                                             className="border border-gray-300 px-4 py-2 w-full"
+                                            disabled={articuloDetalle.UNIDAD_VENTA === 'Pieza'}
                                         />
                                     </div>
 
@@ -417,6 +430,8 @@ const TablaProductos = ({ onClienteActivo }) => {
                                 <div className="mb-4">
                                     <label className="block mb-2">Notas adicionales:</label>
                                     <textarea
+                                        value={articuloDetalle ? articuloDetalle.NOTAS : ""}
+                                        onChange={handleNotasChange}
                                         className="border border-gray-300 px-4 py-2 w-full"
                                     ></textarea>
                                 </div>
