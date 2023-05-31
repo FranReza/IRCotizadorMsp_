@@ -24,3 +24,7 @@ nav {
   a:hover {
     color: #666;
   }
+
+  .swal-popup {
+    z-index: 9999;
+  }
