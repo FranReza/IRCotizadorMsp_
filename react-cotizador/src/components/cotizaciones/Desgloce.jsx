@@ -1,9 +1,11 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useEffect } from 'react';
 import { useArticulosStore } from '../../store/articulosStore';
+import { useTotalesStore } from '../../store/totalesStore';
 
 const Desgloce = () => {
   const listaArticulos = useArticulosStore((state) => state.listaArticulos);
-
+  const { setSubtotal, setImpuestosTotal, setTotalGeneral } = useTotalesStore();
+  
   // Calcular subtotal como suma de precios
   const calcularSubtotal = () => {
     const subtotal = listaArticulos.reduce((total, articulo) => {
@@ -16,8 +18,6 @@ const Desgloce = () => {
     return subtotal;
   };
 
-  const subtotal = calcularSubtotal();
-
   const calcularImpuestosTotal = () => {
     const impuestosTotal = listaArticulos.reduce((total, articulo) => {
       if (articulo.hasOwnProperty('IMPUESTOS')) {
@@ -29,7 +29,15 @@ const Desgloce = () => {
     return impuestosTotal;
   };
 
+  const subtotal = calcularSubtotal();
   const impuestosTotal = calcularImpuestosTotal();
+  const total = parseFloat(subtotal + impuestosTotal).toFixed(2);
+  useEffect(() => {
+    setSubtotal(subtotal);
+    setImpuestosTotal(impuestosTotal);
+    setTotalGeneral(total);
+  }, [subtotal, impuestosTotal, setSubtotal, setImpuestosTotal, setTotalGeneral, total]);
+
 
   return (
     <Fragment>

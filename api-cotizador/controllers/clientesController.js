@@ -1,6 +1,6 @@
 const Firebird = require('node-firebird');
 const dbconfig = require('../database/config');
-const consultas = require('../database/consultas')
+const consultas = require('../database/consultas');
 
 const buscarCliente = (req, res) => {
     const nombre = req.query.query;

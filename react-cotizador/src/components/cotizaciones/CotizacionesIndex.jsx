@@ -1,5 +1,7 @@
 import React, { Fragment, useState } from 'react';
 import Swal from 'sweetalert2';
+import axios from 'axios';
+
 // Importar componentes
 import BuscadorClientes from './BuscadorClientes';
 import FechasCotizacion from './FechasCotizacion';
@@ -10,6 +12,7 @@ import Desgloce from './Desgloce';
 import { useArticulosStore } from '../../store/articulosStore';
 import { useClienteStore } from '../../store/clienteStore';
 import { useStore } from '../../store/fechaCotizacionStore'; //fecha
+import { useTotalesStore } from '../../store/totalesStore';
 
 const CotizacionesIndex = () => {
 
@@ -17,7 +20,7 @@ const CotizacionesIndex = () => {
   const listaArticulos = useArticulosStore((state) => state.listaArticulos);
   const cliente = useClienteStore((state) => state);
   const fechas = useStore((state) => state);
-
+  const { subtotaldoc, impuestosTotaldoc, totalGeneral } = useTotalesStore();
   //usestate
   const [clienteActivo, setClienteActivo] = useState(false);
   const [descuentoExtra, setDescuentoExtra] = useState(0);
@@ -27,61 +30,138 @@ const CotizacionesIndex = () => {
     setDescuentoExtra(parseFloat(value));
   };
 
-  const handleGrabarCotizacion = () => {
-    // Aquí puedes realizar las acciones necesarias al grabar la cotización
-    // Puedes acceder al valor de descuentoExtra y otros datos relevantes desde aquí
-    // Por ejemplo, puedes guardar los valores en una base de datos, enviar una solicitud HTTP, etc.
-    console.log(fechas);
-    console.log(cliente);
-    console.log(listaArticulos);
+  const handleGrabarCotizacion = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/obtener-vendedores');
+      const vendedores = response.data;
+  
+      Swal.fire({
+        title: 'Confirmar Grabar Cotización',
+        text: 'Se grabará la cotización en Microsip.',
+        icon: 'info',
+        showCancelButton: true,
+        confirmButtonText: 'Continuar',
+        cancelButtonText: 'Cancelar',
+        allowOutsideClick: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            title: 'Selecciona Método de Pago',
+            input: 'select',
+            inputOptions: {
+              efectivo: 'Efectivo',
+              transferencia: 'Transferencia',
+              credito: 'Crédito',
+              debito: 'Débito',
+            },
+            showCancelButton: true,
+            confirmButtonText: 'Continuar',
+            cancelButtonText: 'Cancelar',
+            allowOutsideClick: false,
+          }).then((result) => {
+            if (result.isConfirmed) {
+              const metodoPago = result.value;
+  
+              Swal.fire({
+                title: 'Selecciona un vendedor',
+                input: 'select',
+                inputOptions: {
+                  ...vendedores.reduce((options, vendedor) => {
+                    options[vendedor.VENDEDOR_ID] = vendedor.NOMBRE;
+                    return options;
+                  }, {}),
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Continuar',
+                cancelButtonText: 'Cancelar',
+                allowOutsideClick: false,
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const vendedorIdSeleccionado = result.value;
+                  //const vendedorSeleccionado = vendedores.find((vendedor) => vendedor.VENDEDOR_ID === vendedorIdSeleccionado);
+  
+                  console.log(vendedorIdSeleccionado);
+                  console.log(metodoPago);
 
-    Swal.fire({
-      title: 'Confirmar Grabar Cotización',
-      text: 'Se grabará la cotización en Microsip.',
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonText: 'Continuar',
-      cancelButtonText: 'Cancelar',
-      allowOutsideClick: false,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Selecciona Método de Pago',
-          input: 'select',
-          inputOptions: {
-            efectivo: 'Efectivo',
-            transferencia: 'Transferencia',
-            credito: 'Crédito',
-            debito: 'Débito',
-          },
-          showCancelButton: true,
-          confirmButtonText: 'Continuar',
-          cancelButtonText: 'Cancelar',
-          allowOutsideClick: false,
-        }).then((result) => {
-          if (result.isConfirmed) {
+                  Swal.fire({
+                    title: 'Enviando solicitud...',
+                    showCancelButton: false,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                      Swal.showLoading();
+                      
+                      const cotizacionjson = {
+                        CLIENTE: cliente,
+                        FECHAS: fechas,
+                        ARTICULOS: listaArticulos,
+                        METODO_PAGO: metodoPago,
+                        VENDEDOR_ID: vendedorIdSeleccionado,
+                        SUBTOTAL_DOC: subtotaldoc,
+                        IMPUESTOS_TOTAL_DOC: impuestosTotaldoc,
+                        TOTAL_GENERAL: totalGeneral
+                      }
+ 
+                      console.log(cotizacionjson);
 
-            const metodoPago = result.value;
+                      axios.post('http://localhost:5000/grabar-cotizacion', cotizacionjson);
 
-            Swal.fire({
-              title: 'Tercer Mensaje',
-              text: 'Este es el tercer mensaje emergente.',
-              showCancelButton: true,
-              confirmButtonText: 'Continuar',
-              cancelButtonText: 'Cancelar',
-              allowOutsideClick: false,
-            }).then((result) => {
-              if (result.isConfirmed) {
-                // Realizar acciones necesarias después de los mensajes emergentes
-                // ...
-              }
-            });
-          }
-        });
-      }
-    });
+
+                      // Aquí puedes realizar la solicitud al servidor
+                      // Puedes utilizar Axios o la biblioteca que prefieras para hacer la solicitud
+                      
+                      // Ejemplo de solicitud usando Axios
+                      /*axios.post('http://localhost:5000/enviar-cotizacion', data)
+                        .then((response) => {
+                          // Aquí puedes manejar la respuesta del servidor después de enviar la cotización
+                          // Puedes mostrar un mensaje de éxito, redirigir al usuario, etc.
+                          
+                          Swal.fire({
+                            title: 'Éxito',
+                            text: 'La cotización se envió correctamente.',
+                            icon: 'success',
+                            confirmButtonText: 'Aceptar'
+                          });
+                        })
+                        .catch((error) => {
+                          // Aquí puedes manejar los errores de la solicitud al servidor
+                          // Puedes mostrar un mensaje de error, notificar al usuario, etc.
+                          
+                          Swal.fire({
+                            title: 'Error',
+                            text: 'Hubo un error al enviar la cotización.',
+                            icon: 'error',
+                            confirmButtonText: 'Aceptar'
+                          });
+                        });*/
+                    }
+                  });
+                  
+                  // Realizar acciones necesarias después de los mensajes emergentes
+                  // Puedes utilizar el objeto vendedorSeleccionado que contiene tanto el ID como el nombre
+                  // ...
+  
+                  // Ejemplo de solicitud POST con el ID del vendedor
+                  /*axios.post('http://localhost:5000/grabar-cotizacion', {
+                    vendedorId: vendedorIdSeleccionado,
+                    metodoPago: metodoPago,
+                  }).then((response) => {
+                    // Manejar la respuesta de la solicitud POST
+                  }).catch((error) => {
+                    // Manejar el error de la solicitud POST
+                  });*/
+                }
+              });
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
-
+  
+  
 
   const handleCancelarCotizacion = () => {
     // Aquí puedes realizar las acciones necesarias al cancelar la cotización

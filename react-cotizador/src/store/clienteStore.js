@@ -7,6 +7,7 @@ export const useClienteStore = create((set) => ({
   NOMBRE_MONEDA: '',
   COND_PAGO_ID: 0,
   NOMBRE_CONDICION: '',
+  DIR_CLI_ID : 0,
   EMAIL: '',
   RFC_CURP: '',
   setCliente: (nuevoCliente) => set(() => nuevoCliente),
