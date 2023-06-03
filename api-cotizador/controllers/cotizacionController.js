@@ -220,9 +220,9 @@ const grabarCotizacionMsp = (req, res) => {
                     ARTICULOS: ARTICULOS,
                   };
                   const filePath = generarPDF(datosPDF);
-                  console.log(filePath);
 
-                  enviarCorreo(filePath, 'coordinacion@irsoluciones.com.mx')
+                  //enviamos por correo
+                  enviarCorreo(filePath, 'coordinacion@irsoluciones.com.mx');
 
                   // Enviar el PDF como respuesta al cliente
                   res.sendFile(filePath);
