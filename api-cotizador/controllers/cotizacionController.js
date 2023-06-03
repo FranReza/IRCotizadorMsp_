@@ -1,6 +1,8 @@
 const Firebird = require('node-firebird');
 const dbconfig = require('../database/config');
 const consultas = require('../database/consultas');
+const generarPDF = require('../services/generarPDF');
+const enviarCorreo = require('../services/enviarCorreo');
 
 const grabarCotizacionMsp = (req, res) => {
   const { CLIENTE, FECHAS, ARTICULOS, METODO_PAGO, VENDEDOR_ID, SUBTOTAL_DOC, IMPUESTOS_TOTAL_DOC, TOTAL_GENERAL } = req.body;
@@ -104,7 +106,7 @@ const grabarCotizacionMsp = (req, res) => {
           null,
         ];
 
-        console.log('folio generado: '+ folioCompleto);
+        console.log('folio generado: ' + folioCompleto);
 
         transaction.query(consultas.insertDoctoVe, datos_doctos_ve, function (err, result) {
           if (err) {
@@ -210,6 +212,20 @@ const grabarCotizacionMsp = (req, res) => {
                   }
 
                   console.log('Datos insertados correctamente en ambas tablas.');
+
+                  // Generar el PDF
+                  const datosPDF = {
+                    CLIENTE: CLIENTE,
+                    FECHAS: FECHAS,
+                    ARTICULOS: ARTICULOS,
+                  };
+                  const filePath = generarPDF(datosPDF);
+                  console.log(filePath);
+
+                  enviarCorreo(filePath, 'coordinacion@irsoluciones.com.mx')
+
+                  // Enviar el PDF como respuesta al cliente
+                  res.sendFile(filePath);
                   db.detach();
                 });
               }

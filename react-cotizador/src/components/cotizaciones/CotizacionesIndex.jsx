@@ -34,7 +34,7 @@ const CotizacionesIndex = () => {
     try {
       const response = await axios.get('http://localhost:5000/obtener-vendedores');
       const vendedores = response.data;
-  
+
       Swal.fire({
         title: 'Confirmar Grabar Cotización',
         text: 'Se grabará la cotización en Microsip.',
@@ -61,7 +61,7 @@ const CotizacionesIndex = () => {
           }).then((result) => {
             if (result.isConfirmed) {
               const metodoPago = result.value;
-  
+
               Swal.fire({
                 title: 'Selecciona un vendedor',
                 input: 'select',
@@ -79,7 +79,7 @@ const CotizacionesIndex = () => {
                 if (result.isConfirmed) {
                   const vendedorIdSeleccionado = result.value;
                   //const vendedorSeleccionado = vendedores.find((vendedor) => vendedor.VENDEDOR_ID === vendedorIdSeleccionado);
-  
+
                   console.log(vendedorIdSeleccionado);
                   console.log(metodoPago);
 
@@ -90,7 +90,7 @@ const CotizacionesIndex = () => {
                     allowOutsideClick: false,
                     didOpen: () => {
                       Swal.showLoading();
-                      
+
                       const cotizacionjson = {
                         CLIENTE: cliente,
                         FECHAS: fechas,
@@ -101,15 +101,31 @@ const CotizacionesIndex = () => {
                         IMPUESTOS_TOTAL_DOC: impuestosTotaldoc,
                         TOTAL_GENERAL: totalGeneral
                       }
- 
+
                       console.log(cotizacionjson);
 
-                      axios.post('http://localhost:5000/grabar-cotizacion', cotizacionjson);
+                      axios.post('http://localhost:5000/grabar-cotizacion', cotizacionjson,
+                        {
+                          responseType: 'blob'
+                        })
+                        .then((response) => {
+                          const url = window.URL.createObjectURL(new Blob([response.data]));
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.setAttribute('download', 'cotizacion.pdf');
+                          document.body.appendChild(link);
+                          link.click();
+                          document.body.removeChild(link);
+                          window.URL.revokeObjectURL(url);
+                        })
+                        .catch((error) => {
+                          console.log(error);
+                        });
 
 
                       // Aquí puedes realizar la solicitud al servidor
                       // Puedes utilizar Axios o la biblioteca que prefieras para hacer la solicitud
-                      
+
                       // Ejemplo de solicitud usando Axios
                       /*axios.post('http://localhost:5000/enviar-cotizacion', data)
                         .then((response) => {
@@ -136,11 +152,11 @@ const CotizacionesIndex = () => {
                         });*/
                     }
                   });
-                  
+
                   // Realizar acciones necesarias después de los mensajes emergentes
                   // Puedes utilizar el objeto vendedorSeleccionado que contiene tanto el ID como el nombre
                   // ...
-  
+
                   // Ejemplo de solicitud POST con el ID del vendedor
                   /*axios.post('http://localhost:5000/grabar-cotizacion', {
                     vendedorId: vendedorIdSeleccionado,
@@ -160,8 +176,8 @@ const CotizacionesIndex = () => {
       console.log(error);
     }
   };
-  
-  
+
+
 
   const handleCancelarCotizacion = () => {
     // Aquí puedes realizar las acciones necesarias al cancelar la cotización
