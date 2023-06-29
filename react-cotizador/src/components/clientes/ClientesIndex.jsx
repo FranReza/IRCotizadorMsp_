@@ -6,6 +6,6 @@ const ClientesIndex = () => {
             Alta de Clientes
         </Fragment>
     );
-};  
+ };    
 
 export default ClientesIndex;
