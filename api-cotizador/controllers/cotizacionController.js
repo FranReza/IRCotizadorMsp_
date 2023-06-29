@@ -50,10 +50,10 @@ const grabarCotizacionMsp = (req, res) => {
           CLIENTE.DIR_CLI_ID,
           null,
           null,
-          1,
-          0,
-          'P',
-          0,
+          1, //MONEDA_ID
+          0, //TIPO DE CAMBIO
+          'P', //TIPO DE DESCUENTO DE AHORA EN ADELANTE SERA PORCENTAJE
+          0, //DSCTO_PCTJE 
           0,
           'P',
           'S',
@@ -132,7 +132,7 @@ const grabarCotizacionMsp = (req, res) => {
                 idDoctosVe,
                 articulo.CLAVE_ARTICULO,
                 articulo.ARTICULO_ID,
-                mcuadradoFloat,
+                mcuadradoFloat, //UNIDADES
                 0,
                 0,
                 0,
@@ -222,7 +222,7 @@ const grabarCotizacionMsp = (req, res) => {
                   const filePath = generarPDF(datosPDF);
 
                   //enviamos por correo
-                  enviarCorreo(filePath, 'coordinacion@irsoluciones.com.mx');
+                  enviarCorreo(filePath, 'vara_54@hotmail.com');
 
                   // Enviar el PDF como respuesta al cliente
                   res.sendFile(filePath);

@@ -4,7 +4,7 @@ async function enviarCorreoPDF(pdfFilePath, destinatario) {
   // Configurar el transporte de correo electrónico
   const transporter = nodemailer.createTransport({
     // Configura aquí los detalles de tu servidor de correo saliente (SMTP)
-    host: 'smtp.1and1.mx',
+    host: 'smtp.ionos.mx',
     port: 465,
     secure: true,
     auth: {
