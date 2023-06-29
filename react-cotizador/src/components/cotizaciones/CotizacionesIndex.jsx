@@ -21,6 +21,7 @@ const CotizacionesIndex = () => {
   const cliente = useClienteStore((state) => state);
   const fechas = useStore((state) => state);
   const { subtotaldoc, impuestosTotaldoc, totalGeneral } = useTotalesStore();
+  
   //usestate
   const [clienteActivo, setClienteActivo] = useState(false);
   const [descuentoExtra, setDescuentoExtra] = useState(0);

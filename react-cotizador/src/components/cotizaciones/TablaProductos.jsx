@@ -245,6 +245,7 @@ const TablaProductos = ({ onClienteActivo }) => {
             }));
 
         } else {
+            
             setArticuloDetalle((prevDetalle) => ({
                 ...prevDetalle,
                 DESCTO: 0,

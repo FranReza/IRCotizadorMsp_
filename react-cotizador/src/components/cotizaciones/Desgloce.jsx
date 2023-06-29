@@ -32,6 +32,8 @@ const Desgloce = () => {
   const subtotal = calcularSubtotal();
   const impuestosTotal = calcularImpuestosTotal();
   const total = parseFloat(subtotal + impuestosTotal).toFixed(2);
+
+  
   useEffect(() => {
     setSubtotal(subtotal);
     setImpuestosTotal(impuestosTotal);
@@ -48,7 +50,13 @@ const Desgloce = () => {
             <span className="text-right text-xl">${parseFloat(subtotal).toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-left text-xl">Impuestos</span>
+            <span className="text-left text-xl">Impuestos (IVA 16%)</span>
+            <span className="text-right text-xl">
+              ${parseFloat(impuestosTotal).toFixed(2)}
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-left text-xl">Descuento Extra($)</span>
             <span className="text-right text-xl">
               ${parseFloat(impuestosTotal).toFixed(2)}
             </span>
