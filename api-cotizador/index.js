@@ -3,7 +3,12 @@ const cors = require('cors');
 const routes = require('./routes');
 const app = express();
 
-app.use(cors({exposedHeaders: '*'}));
+app.use(cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+    exposedHeaders: '*',
+    credentials: true
+  }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended:true }))

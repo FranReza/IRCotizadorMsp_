@@ -3,14 +3,17 @@ import { useArticulosStore } from '../../store/articulosStore';
 import { useTotalesStore } from '../../store/totalesStore';
 
 const Desgloce = () => {
+  //zustand js 
   const listaArticulos = useArticulosStore((state) => state.listaArticulos);
   const { setSubtotal, setImpuestosTotal, setTotalGeneral } = useTotalesStore();
-  
+  const { desctoExtra } = useTotalesStore();
+
   // Calcular subtotal como suma de precios
   const calcularSubtotal = () => {
+
     const subtotal = listaArticulos.reduce((total, articulo) => {
       if (articulo.hasOwnProperty('TOTAL')) {
-        return total + parseFloat(articulo.TOTAL);
+        return total + (parseFloat(articulo.TOTAL));
       }
       return total;
     }, 0);
@@ -32,13 +35,15 @@ const Desgloce = () => {
   const subtotal = calcularSubtotal();
   const impuestosTotal = calcularImpuestosTotal();
   const total = parseFloat(subtotal + impuestosTotal).toFixed(2);
+  const ImpteNeto = subtotal - desctoExtra; 
+  const IVAaplicado = parseFloat(ImpteNeto * 0.16).toFixed(2);
+  const TotalDocumento = parseFloat(ImpteNeto + (ImpteNeto*0.16)).toFixed(2);
 
-  
   useEffect(() => {
-    setSubtotal(subtotal);
-    setImpuestosTotal(impuestosTotal);
-    setTotalGeneral(total);
-  }, [subtotal, impuestosTotal, setSubtotal, setImpuestosTotal, setTotalGeneral, total]);
+    setSubtotal(parseFloat(ImpteNeto));
+    setImpuestosTotal(parseFloat(IVAaplicado));
+    setTotalGeneral(parseFloat(TotalDocumento)); 
+  }, [subtotal, impuestosTotal, setSubtotal, setImpuestosTotal, setTotalGeneral, total, IVAaplicado, ImpteNeto, TotalDocumento]);
 
 
   return (
@@ -50,21 +55,27 @@ const Desgloce = () => {
             <span className="text-right text-xl">${parseFloat(subtotal).toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-left text-xl">Impuestos (IVA 16%)</span>
+            <span className="text-left text-xl">Descuento Extra($)</span>
             <span className="text-right text-xl">
-              ${parseFloat(impuestosTotal).toFixed(2)}
+            ${isNaN(parseFloat(desctoExtra)) ? 0 : parseFloat(desctoExtra).toFixed(2)}
             </span>
           </div>
           <div className="flex justify-between items-center">
-            <span className="text-left text-xl">Descuento Extra($)</span>
+            <span className="text-left text-xl">Impte Neto</span>
             <span className="text-right text-xl">
-              ${parseFloat(impuestosTotal).toFixed(2)}
+            {parseFloat(ImpteNeto).toFixed(2)} 
+            </span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-left text-xl">IVA 16%</span>
+            <span className="text-right text-xl">
+            {parseFloat(IVAaplicado).toFixed(2)} 
             </span>
           </div>
           <div className="flex justify-between items-center font-bold">
             <span className="text-left text-xl">Total</span>
             <span className="text-right text-xl">
-              ${parseFloat( subtotal + impuestosTotal ).toFixed(2)}
+            {parseFloat(TotalDocumento).toFixed(2)} 
             </span>
           </div>
         </div>

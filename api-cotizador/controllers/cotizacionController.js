@@ -5,7 +5,7 @@ const generarPDF = require('../services/generarPDF');
 const enviarCorreo = require('../services/enviarCorreo');
 
 const grabarCotizacionMsp = (req, res) => {
-  const { CLIENTE, FECHAS, ARTICULOS, METODO_PAGO, VENDEDOR_ID, SUBTOTAL_DOC, IMPUESTOS_TOTAL_DOC, TOTAL_GENERAL } = req.body;
+  const { CLIENTE, FECHAS, ARTICULOS, METODO_PAGO, VENDEDOR_ID, SUBTOTAL_DOC, IMPUESTOS_TOTAL_DOC, DESCUENTO_EXTRA, TOTAL_GENERAL } = req.body;
 
   Firebird.attach(dbconfig, function (err, db) {
     if (err) {
@@ -35,6 +35,7 @@ const grabarCotizacionMsp = (req, res) => {
         const fechaHora = new Date();
         const hora = fechaHora.toTimeString().split(' ')[0];
         const fechaHoraDoc = fechaHora.toISOString().replace('T', ' ').split('.')[0];
+        const calcular_pctje = (DESCUENTO_EXTRA / TOTAL_GENERAL) * 100;
 
         const datos_doctos_ve = [
           -1,
@@ -52,9 +53,9 @@ const grabarCotizacionMsp = (req, res) => {
           null,
           1, //MONEDA_ID
           0, //TIPO DE CAMBIO
-          'P', //TIPO DE DESCUENTO DE AHORA EN ADELANTE SERA PORCENTAJE
-          0, //DSCTO_PCTJE 
-          0,
+          'I', //TIPO DE DESCUENTO DE AHORA EN ADELANTE SERA PORCENTAJE
+          calcular_pctje, //DSCTO_PCTJE 
+          DESCUENTO_EXTRA,
           'P',
           'S',
           FECHAS.fecha_vencimiento,
@@ -63,7 +64,7 @@ const grabarCotizacionMsp = (req, res) => {
           null,
           null,
           null,
-          SUBTOTAL_DOC,
+          SUBTOTAL_DOC ,
           0,
           0,
           IMPUESTOS_TOTAL_DOC,
@@ -106,8 +107,6 @@ const grabarCotizacionMsp = (req, res) => {
           null,
         ];
 
-        console.log('folio generado: ' + folioCompleto);
-
         transaction.query(consultas.insertDoctoVe, datos_doctos_ve, function (err, result) {
           if (err) {
             console.log('Error al tratar de insertar en la primera tabla');
@@ -120,8 +119,18 @@ const grabarCotizacionMsp = (req, res) => {
           const idDoctosVe = result.DOCTO_VE_ID;
           console.log(idDoctosVe);
           let posicion = 1;
+          let descuentoDividido = 0;
+
 
           const insertions = ARTICULOS.map((articulo) => {
+
+            if(ARTICULOS.length > 1) {
+              descuentoDividido = parseFloat(DESCUENTO_EXTRA / ARTICULOS.length).toFixed(3);
+            } else {
+              descuentoDividido = DESCUENTO_EXTRA;
+            }
+
+
             if (articulo.UNIDAD_VENTA === 'Metro cuadrado') {
               const mcuadrado = articulo.MCUADRADO;
               const mcuadradoFloat = +parseFloat(mcuadrado);
@@ -140,7 +149,7 @@ const grabarCotizacionMsp = (req, res) => {
                 articulo.DESCTO,
                 calc_dscto,
                 articulo.DESCTO,
-                0,
+                descuentoDividido,
                 0,
                 0,
                 parseFloat(articulo.TOTAL),
@@ -170,7 +179,7 @@ const grabarCotizacionMsp = (req, res) => {
                 articulo.DESCTO,
                 calc_dscto,
                 articulo.DESCTO,
-                0,
+                descuentoDividido,
                 0,
                 0,
                 parseFloat(articulo.TOTAL),
@@ -222,7 +231,16 @@ const grabarCotizacionMsp = (req, res) => {
                   const filePath = generarPDF(datosPDF);
 
                   //enviamos por correo
-                  enviarCorreo(filePath, 'vara_54@hotmail.com');
+                  /*enviarCorreoPDF(filePath, 'fran.reza@hotmail.com', function (error) {
+                    if (error) {
+                      console.log('Error al enviar el correo electrónico:', error);
+                      res.status(500).send({ mensaje: 'Error al enviar el correo electrónico' });
+                      db.detach();
+                      return;
+                    }
+                  
+                    
+                  });*/
 
                   // Enviar el PDF como respuesta al cliente
                   res.sendFile(filePath);

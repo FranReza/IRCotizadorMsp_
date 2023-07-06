@@ -20,15 +20,18 @@ const CotizacionesIndex = () => {
   const listaArticulos = useArticulosStore((state) => state.listaArticulos);
   const cliente = useClienteStore((state) => state);
   const fechas = useStore((state) => state);
-  const { subtotaldoc, impuestosTotaldoc, totalGeneral } = useTotalesStore();
+  const { setDescuentoExtra } = useTotalesStore((state) => state);
+  const { subtotaldoc, impuestosTotaldoc, desctoExtra,  totalGeneral } = useTotalesStore();
   
   //usestate
   const [clienteActivo, setClienteActivo] = useState(false);
-  const [descuentoExtra, setDescuentoExtra] = useState(0);
+  const [descuentoExtra, setDescuentoExtraState] = useState(0);
 
   const handleDescuentoExtraChange = (event) => {
     const { value } = event.target;
-    setDescuentoExtra(parseFloat(value));
+    const parsedValue = value !== '' ? parseFloat(value) : 0;
+    setDescuentoExtra(parsedValue);
+    setDescuentoExtraState(parsedValue);
   };
 
   const handleGrabarCotizacion = async () => {
@@ -100,6 +103,7 @@ const CotizacionesIndex = () => {
                         VENDEDOR_ID: vendedorIdSeleccionado,
                         SUBTOTAL_DOC: subtotaldoc,
                         IMPUESTOS_TOTAL_DOC: impuestosTotaldoc,
+                        DESCUENTO_EXTRA: desctoExtra,
                         TOTAL_GENERAL: totalGeneral
                       }
 
@@ -197,10 +201,11 @@ const CotizacionesIndex = () => {
       </div>
       <div className="flex justify-end m-5">
         <div className="flex items-center mr-4">
-          <h2 className="text-lg font-bold mr-2">Descuento Extra:</h2>
+          <h2 className="text-lg font-bold mr-2">Descuento Extra en Importe:</h2>
           <input
             type="number"
             className="border rounded px-4 py-2"
+            min={0}
             value={descuentoExtra}
             onChange={handleDescuentoExtraChange}
           />

@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-async function enviarCorreoPDF(pdfFilePath, destinatario) {
+async function enviarCorreoPDF(pdfFilePath, destinatario, callback) {
   // Configurar el transporte de correo electrónico
   const transporter = nodemailer.createTransport({
     // Configura aquí los detalles de tu servidor de correo saliente (SMTP)
@@ -31,8 +31,14 @@ async function enviarCorreoPDF(pdfFilePath, destinatario) {
     // Enviar el correo electrónico
     const info = await transporter.sendMail(mensaje);
     console.log('Correo electrónico enviado:', info.messageId);
+
+    // Llamar al callback sin errores
+    callback(null);
   } catch (error) {
     console.error('Error al enviar el correo electrónico:', error);
+
+    // Llamar al callback con el error
+    callback(error);
   }
 }
 

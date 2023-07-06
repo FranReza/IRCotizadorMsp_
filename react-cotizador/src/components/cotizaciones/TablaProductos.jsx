@@ -11,6 +11,7 @@ const TablaProductos = ({ onClienteActivo }) => {
     const cliente = useClienteStore((state) => state);
     const agregarArticulo = useArticulosStore((state) => state.agregarArticulo);
     const listaArticulos = useArticulosStore((state) => state.listaArticulos);
+    const eliminarArticulo = useArticulosStore((state) => state.eliminarArticulo);
 
     //estados
     //use state para todos los articulos y modal de los articulos
@@ -245,7 +246,7 @@ const TablaProductos = ({ onClienteActivo }) => {
             }));
 
         } else {
-            
+
             setArticuloDetalle((prevDetalle) => ({
                 ...prevDetalle,
                 DESCTO: 0,
@@ -263,6 +264,23 @@ const TablaProductos = ({ onClienteActivo }) => {
         }))
     };
 
+    const handleEliminarArticulo = (articuloId) => {
+        Swal.fire({
+          title: '¿Estás seguro?',
+          text: 'El artículo será eliminado de la lista.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar',
+          reverseButtons: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Si el usuario confirma la eliminación, llamas a la función eliminarArticuloStore
+            eliminarArticulo(articuloId);
+            Swal.fire('Eliminado', 'El artículo ha sido eliminado correctamente.', 'success');
+          }
+        });
+      };
     const handleAgregarArticulo = () => {
         if (
             articuloDetalle.ARTICULO_ID !== 0 || // Verificar que ARTICULO_ID no sea cero
@@ -513,8 +531,6 @@ const TablaProductos = ({ onClienteActivo }) => {
                             <th className="py-3 px-6 text-left">Nombre</th>
                             <th className="py-3 px-6 text-left">U.M</th>
                             <th className="py-3 px-6 text-left">Cant</th>
-                            <th className="py-3 px-6 text-center">Ancho</th>
-                            <th className="py-3 px-6 text-center">Alto</th>
                             <th className="py-3 px-6 text-center">M&sup2;</th>
                             <th className="py-3 px-6 text-center">PRECIO</th>
                             <th className="py-3 px-6 text-center">Total</th>
@@ -522,21 +538,21 @@ const TablaProductos = ({ onClienteActivo }) => {
                         </tr>
                     </thead>
                     <tbody className="text-gray-600 text-sm font-light">
-                        {listaArticulos.map(( articulo, index ) => (
+                        {listaArticulos.map((articulo, index) => (
                             <tr key={index} className="border-b border-gray-200 hover:bg-gray-100">
                                 <td className="py-3 px-6 text-left whitespace-nowrap">{articulo.NOMBRE_ARTICULO}</td>
                                 <td className="py-3 px-6 text-center whitespace-nowrap">{articulo.UNIDAD_VENTA}</td>
                                 <td className="py-3 px-6 text-center whitespace-nowrap">{articulo.CANTIDAD}</td>
-                                <td className="py-3 px-6 text-center whitespace-nowrap">{articulo.ANCHO}</td>
-                                <td className="py-3 px-6 text-center whitespace-nowrap">{articulo.ALTO}</td>
                                 <td className="py-3 px-6 text-center whitespace-nowrap">{articulo.MCUADRADO}</td>
                                 <td className="py-3 px-6 text-center whitespace-nowrap">${articulo.PRECIO}</td>
                                 <td className="py-3 px-6 text-center whitespace-nowrap">${articulo.TOTAL}</td>
                                 <td className="py-3 px-4 text-center">
-                                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-1">
+                                    {/*<button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-1">
                                         <i className="fa-solid fa-pen-to-square"></i>
-                                    </button>
-                                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
+                        </button>*/}
+                                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded"
+                                        onClick={() => handleEliminarArticulo(articulo.ARTICULO_ID)}
+                                    >
                                         <i className="fa-solid fa-trash"></i>
                                     </button>
                                 </td>
