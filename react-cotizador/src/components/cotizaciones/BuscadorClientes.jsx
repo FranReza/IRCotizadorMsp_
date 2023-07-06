@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
-import axios from 'axios';
 import { useClienteStore } from '../../store/clienteStore';
+import clienteAxios from '../config/axios';
 
 
 const BuscadorClientes = ({ onClienteActivo }) => {
@@ -17,7 +17,7 @@ const BuscadorClientes = ({ onClienteActivo }) => {
         if (query !== '') {
             setBusquedaClientes(query);
             try {
-                const response = await axios.get(`http://localhost:5000/buscar-cliente?query=${query}`);
+                const response = await clienteAxios.get(`/buscar-cliente?query=${query}`);
                 if (response) {
                     setResultadosClientes(response.data);
                     setShowResultadosClientes(true);

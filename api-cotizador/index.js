@@ -4,7 +4,7 @@ const routes = require('./routes');
 const app = express();
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: 'http://172.16.1.108:3000',
     methods: ['GET', 'POST'],
     exposedHeaders: '*',
     credentials: true
