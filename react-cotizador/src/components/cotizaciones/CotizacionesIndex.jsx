@@ -18,25 +18,80 @@ const CotizacionesIndex = () => {
 
   //zustand js 
   const listaArticulos = useArticulosStore((state) => state.listaArticulos);
+  const clienteStore = useClienteStore();
   const cliente = useClienteStore((state) => state);
+  const corregirCorreo = useClienteStore((state) => state.corregirCorreo);
+  const setCliente = useClienteStore((state) => state.setCliente);
   const fechas = useStore((state) => state);
   const { setDescuentoExtra } = useTotalesStore((state) => state);
-  const { subtotaldoc, impuestosTotaldoc, desctoExtra,  totalGeneral } = useTotalesStore();
-  
+  const { subtotaldoc, impuestosTotaldoc, desctoExtra, totalGeneral } = useTotalesStore();
+
   //usestate
   const [clienteActivo, setClienteActivo] = useState(false);
   const [descuentoExtra, setDescuentoExtraState] = useState(0);
 
+
+
+  const validateEmail = (email) => {
+    // Expresión regular para validar el formato de un correo electrónico
+    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+    return emailRegex.test(email);
+  };
+
+  const corregirMail = (correo) => {
+    cliente.setCliente((prevCliente) => ({
+      ...prevCliente,
+      EMAIL: correo,
+    }));
+  };
+
+
   const handleDescuentoExtraChange = (event) => {
+
+    if (listaArticulos === 0) {
+      alert('Aun no hay nada en la tabla');
+      setDescuentoExtraState(0);
+      return;
+    }
+
     const { value } = event.target;
-    const parsedValue = value !== '' ? parseFloat(value) : 0;
-    setDescuentoExtra(parsedValue);
-    setDescuentoExtraState(parsedValue);
+    let parsedValue = parseFloat(value);
+
+    // Convertir el valor a cadena y luego a número para eliminar los ceros a la izquierda
+    parsedValue = Number(parsedValue.toString());
+
+    // Verificar si el valor es un número válido
+    if (isNaN(parsedValue) || parsedValue < 0) {
+      parsedValue = 0; // Si no es válido, establecer el valor en cero
+    }
+
+    if (parsedValue > subtotaldoc) {
+      Swal.fire({
+        title: 'Valor inválido',
+        text: 'El descuento no puede ser mayor al subtotal',
+        icon: 'warning',
+        confirmButtonText: 'Aceptar',
+      }).then(() => {
+        parsedValue = 0; // Establecer el valor en cero
+        setDescuentoExtra(parsedValue);
+        setDescuentoExtraState(parsedValue);
+      });
+    } else {
+      setDescuentoExtra(parsedValue);
+      setDescuentoExtraState(parsedValue);
+    }
   };
 
   const handleGrabarCotizacion = async () => {
+
+    if (listaArticulos.length === 0) {
+      alert('Aun no hay nada en la tabla');
+      return;
+    }
+
     try {
-      const response = await axios.get('http://localhost:5000/obtener-vendedores');
+      const response = await axios.get('http://vaespersianas.ddns.net:5000/obtener-vendedores');
       const vendedores = response.data;
 
       Swal.fire({
@@ -82,11 +137,10 @@ const CotizacionesIndex = () => {
               }).then((result) => {
                 if (result.isConfirmed) {
                   const vendedorIdSeleccionado = result.value;
-                  //const vendedorSeleccionado = vendedores.find((vendedor) => vendedor.VENDEDOR_ID === vendedorIdSeleccionado);
+                  const { EMAIL } = cliente;
 
-                  console.log(vendedorIdSeleccionado);
-                  console.log(metodoPago);
-
+                  let confirmButtonText = 'Enviar';
+                  let showCancelButton = true;
                   Swal.fire({
                     title: 'Enviando solicitud...',
                     showCancelButton: false,
@@ -107,70 +161,41 @@ const CotizacionesIndex = () => {
                         TOTAL_GENERAL: totalGeneral
                       }
 
-                      console.log(cotizacionjson);
-
-                      axios.post('http://localhost:5000/grabar-cotizacion', cotizacionjson,
+                      axios.post('http://vaespersianas.ddns.net:5000/grabar-cotizacion', cotizacionjson,
                         {
                           responseType: 'blob'
                         })
                         .then((response) => {
+                          console.log(response.status);
                           const url = window.URL.createObjectURL(new Blob([response.data]));
                           const link = document.createElement('a');
                           link.href = url;
+                          console.log(link);
                           link.setAttribute('download', 'cotizacion.pdf');
                           document.body.appendChild(link);
                           link.click();
                           document.body.removeChild(link);
                           window.URL.revokeObjectURL(url);
-                        })
-                        .catch((error) => {
-                          console.log(error);
-                        });
 
-
-                      // Aquí puedes realizar la solicitud al servidor
-                      // Puedes utilizar Axios o la biblioteca que prefieras para hacer la solicitud
-
-                      // Ejemplo de solicitud usando Axios
-                      /*axios.post('http://localhost:5000/enviar-cotizacion', data)
-                        .then((response) => {
-                          // Aquí puedes manejar la respuesta del servidor después de enviar la cotización
-                          // Puedes mostrar un mensaje de éxito, redirigir al usuario, etc.
-                          
                           Swal.fire({
                             title: 'Éxito',
-                            text: 'La cotización se envió correctamente.',
+                            text: 'La cotización se descargó correctamente.',
                             icon: 'success',
                             confirmButtonText: 'Aceptar'
                           });
                         })
                         .catch((error) => {
-                          // Aquí puedes manejar los errores de la solicitud al servidor
-                          // Puedes mostrar un mensaje de error, notificar al usuario, etc.
-                          
+                          console.log(error);
                           Swal.fire({
-                            title: 'Error',
-                            text: 'Hubo un error al enviar la cotización.',
-                            icon: 'error',
+                            title: 'Problemas de conexión',
+                            text: 'La cotización se grabo en microsip pero no se pudo descargar en su navegador, contacte al administrador del sistema.',
+                            icon: 'info',
                             confirmButtonText: 'Aceptar'
                           });
-                        });*/
+                        });
                     }
                   });
-
-                  // Realizar acciones necesarias después de los mensajes emergentes
-                  // Puedes utilizar el objeto vendedorSeleccionado que contiene tanto el ID como el nombre
-                  // ...
-
-                  // Ejemplo de solicitud POST con el ID del vendedor
-                  /*axios.post('http://localhost:5000/grabar-cotizacion', {
-                    vendedorId: vendedorIdSeleccionado,
-                    metodoPago: metodoPago,
-                  }).then((response) => {
-                    // Manejar la respuesta de la solicitud POST
-                  }).catch((error) => {
-                    // Manejar el error de la solicitud POST
-                  });*/
+                
                 }
               });
             }
@@ -181,8 +206,6 @@ const CotizacionesIndex = () => {
       console.log(error);
     }
   };
-
-
 
   const handleCancelarCotizacion = () => {
     // Aquí puedes realizar las acciones necesarias al cancelar la cotización
@@ -200,16 +223,19 @@ const CotizacionesIndex = () => {
         <Desgloce />
       </div>
       <div className="flex justify-end m-5">
-        <div className="flex items-center mr-4">
-          <h2 className="text-lg font-bold mr-2">Descuento Extra en Importe:</h2>
-          <input
-            type="number"
-            className="border rounded px-4 py-2"
-            min={0}
-            value={descuentoExtra}
-            onChange={handleDescuentoExtraChange}
-          />
-        </div>
+        {listaArticulos.length > 0 && (
+          <div className="flex items-center mr-4">
+            <h2 className="text-lg font-bold mr-2">Descuento Extra en Importe:</h2>
+            <input
+              type="number"
+              className="border rounded px-4 py-2"
+              min={0}
+              value={descuentoExtra}
+              onChange={handleDescuentoExtraChange}
+              inputMode="decimal" // Asegura que se trate como un número
+            />
+          </div>
+        )}
         <div>
           <button
             className="mr-2 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

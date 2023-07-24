@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const clienteAxios = axios.create({
-    baseURL: 'http://172.16.1.108:5000',
+    baseURL: 'http://vaespersianas.ddns.net:5000',
     withCredentials: true
     
 });

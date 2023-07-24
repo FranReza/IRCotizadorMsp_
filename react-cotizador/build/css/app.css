@@ -1,0 +1,30 @@
+body {
+    background-color: rgb(241, 236, 236);
+}
+
+nav {
+    font-size: 16px;
+  }
+  
+  ul {
+    list-style: none;
+    display: flex;
+  }
+  
+  li {
+    margin-right: 1.5rem;
+  }
+  
+  a {
+    color: #333;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  
+  a:hover {
+    color: #666;
+  }
+
+  .swal-popup {
+    z-index: 9999;
+  }

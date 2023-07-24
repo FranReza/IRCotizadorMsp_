@@ -10,5 +10,14 @@ export const useClienteStore = create((set) => ({
   DIR_CLI_ID : 0,
   EMAIL: '',
   RFC_CURP: '',
-  setCliente: (nuevoCliente) => set(() => nuevoCliente),
+  setCliente: (nuevoCliente) =>
+  set((state) => ({
+    ...state,
+    ...nuevoCliente,
+  })),
+corregirCorreo: (nuevoCorreo) =>
+  set((state) => ({
+    ...state,
+    EMAIL: nuevoCorreo,
+  })),
 }));

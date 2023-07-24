@@ -1,7 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { useClienteStore } from '../../store/clienteStore';
-import clienteAxios from '../config/axios';
-
+import axios from 'axios';
 
 const BuscadorClientes = ({ onClienteActivo }) => {
     //usamos la libreria de zustand para lograr esta parte
@@ -17,8 +16,9 @@ const BuscadorClientes = ({ onClienteActivo }) => {
         if (query !== '') {
             setBusquedaClientes(query);
             try {
-                const response = await clienteAxios.get(`/buscar-cliente?query=${query}`);
+                const response = await axios.get(`http://vaespersianas.ddns.net:5000/buscar-cliente?query=${query}`);
                 if (response) {
+                    console.log(response.data);
                     setResultadosClientes(response.data);
                     setShowResultadosClientes(true);
                 }
@@ -32,7 +32,9 @@ const BuscadorClientes = ({ onClienteActivo }) => {
     };
 
     const handleSeleccionarCliente = (cliente) => {
-        
+
+        console.log('cliente seleccionado: ', cliente);
+
         setClienteSeleccionado(cliente);
 
         //aqui metemos lo nuevo de zustand
@@ -91,10 +93,9 @@ const BuscadorClientes = ({ onClienteActivo }) => {
                                 <p className="mt-2 font-bold">Condicion de pago: {clienteSeleccionado.NOMBRE_CONDICION}</p>
                                 <p className="mt-2 font-bold">RFC/CURP: {clienteSeleccionado.RFC_CURP}</p>
                             </div>
-                        </div> 
+                        </div>
 
                     </div>
-
                 </div>
             </div>
         </Fragment>

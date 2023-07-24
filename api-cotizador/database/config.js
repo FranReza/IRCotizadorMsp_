@@ -9,7 +9,6 @@ const dbconfig = {
     pageSize: 4096,
     retryConnectionInterval:1000,
     charset: 'ISO8859_1',
-};
+};  
 
-//teniamos en su momento VAES PERSIANAS PERO SE QUEDO EN MI OTRA PC XD
-module.exports =  dbconfig ;
+module.exports =  dbconfig;

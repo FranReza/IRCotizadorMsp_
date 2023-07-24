@@ -76,7 +76,9 @@ const TablaProductos = ({ onClienteActivo }) => {
             setbuscarArticulos(query);
 
             try {
-                const response = await axios.get(`http://localhost:5000/buscar-articulo?query=${query}`);
+                const encodedQuery = encodeURIComponent(query); // Codificar la cadena de búsqueda
+
+                const response = await axios.get(`http://vaespersianas.ddns.net:5000/buscar-articulo?query=${encodedQuery}`);
 
                 if (response) {
                     console.log(response.data);
@@ -87,7 +89,20 @@ const TablaProductos = ({ onClienteActivo }) => {
                 }
 
             } catch (error) {
-                console.log(error);
+                if (error.response && error.response.data) {
+                    const errorMessage = error.response.data.error; // Obtener el mensaje de error del objeto JSON de error
+                    
+
+                    Swal.fire({
+                        title: 'Caracteres especiales!',
+                        text: errorMessage, // Utilizar el mensaje de error en el cuerpo del mensaje de SweetAlert
+                        icon: 'error',
+                        confirmButtonText: 'Aceptar'
+                    });
+                } else {
+                    console.log(error);
+                    // Aquí puedes manejar otros tipos de errores, como errores de red o de solicitud
+                }
             }
         } else {
             setShowResultadosArticulos(false);
@@ -110,7 +125,7 @@ const TablaProductos = ({ onClienteActivo }) => {
             const clienteID = cliente.CLIENTE_ID;
 
             const response = await axios.get(
-                `http://localhost:5000/precio-articulo?articuloID=${articuloID}&clienteID=${clienteID}`
+                `http://vaespersianas.ddns.net:5000/precio-articulo?articuloID=${articuloID}&clienteID=${clienteID}`
             );
             if (response) {
                 const { PRECIO_UNITARIO, IVA, TOTAL } = response.data;
@@ -266,21 +281,21 @@ const TablaProductos = ({ onClienteActivo }) => {
 
     const handleEliminarArticulo = (articuloId) => {
         Swal.fire({
-          title: '¿Estás seguro?',
-          text: 'El artículo será eliminado de la lista.',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: 'Sí, eliminar',
-          cancelButtonText: 'Cancelar',
-          reverseButtons: true,
+            title: '¿Estás seguro?',
+            text: 'El artículo será eliminado de la lista.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true,
         }).then((result) => {
-          if (result.isConfirmed) {
-            // Si el usuario confirma la eliminación, llamas a la función eliminarArticuloStore
-            eliminarArticulo(articuloId);
-            Swal.fire('Eliminado', 'El artículo ha sido eliminado correctamente.', 'success');
-          }
+            if (result.isConfirmed) {
+                // Si el usuario confirma la eliminación, llamas a la función eliminarArticuloStore
+                eliminarArticulo(articuloId);
+                Swal.fire('Eliminado', 'El artículo ha sido eliminado correctamente.', 'success');
+            }
         });
-      };
+    };
     const handleAgregarArticulo = () => {
         if (
             articuloDetalle.ARTICULO_ID !== 0 || // Verificar que ARTICULO_ID no sea cero

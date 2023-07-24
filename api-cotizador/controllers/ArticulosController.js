@@ -6,7 +6,7 @@ const consultas = require('../database/consultas');
 /*Este endpoint genera la busqueda del articulo por la web*/
 const buscarArticulo = (req, res) => {
     
-    const nombre_articulo = req.query.query;
+    const nombre_articulo = decodeURIComponent(req.query.query);
 
     Firebird.attach(dbconfig, function (err, db) {
         if(err){
@@ -15,6 +15,7 @@ const buscarArticulo = (req, res) => {
         db.query(consultas.buscarArticuloPorNombre, [`${nombre_articulo}`], function(err, result){
             if(err){
                 console.log('error al tratar de consultar el articulo');
+                res.status(500).json({error: 'No se pudo consultar el articulo especificado...'})
             }
             res.status(200).send(result);
 

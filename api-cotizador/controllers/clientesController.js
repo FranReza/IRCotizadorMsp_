@@ -7,8 +7,8 @@ const buscarCliente = (req, res) => {
     if (nombre !== '') {
         Firebird.attach(dbconfig, function (err, db) {
 
-            if (err) {
-                console.log('error al tratar de consultar a la base de datos microsip...');
+            if (err) { 
+                console.log('error al tratar de consultar a la base de datos microsip...'+ err);
             }
 
             db.query(consultas.buscarClientesPorNombre, [`%${nombre}%`], function (err, result) {
@@ -19,11 +19,10 @@ const buscarCliente = (req, res) => {
 
                 res.status(200).send(result);
 
-                db.detach();
+                db.detach(); 
             });
         });
     }
-
 };
 
 module.exports = { buscarCliente }

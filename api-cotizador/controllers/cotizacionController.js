@@ -227,23 +227,18 @@ const grabarCotizacionMsp = (req, res) => {
                     CLIENTE: CLIENTE,
                     FECHAS: FECHAS,
                     ARTICULOS: ARTICULOS,
+                    SUBTOTAL: SUBTOTAL_DOC,
+                    IMPUESTOS: IMPUESTOS_TOTAL_DOC,
+                    DESCUENTO: DESCUENTO_EXTRA,
+                    TOTAL: TOTAL_GENERAL
                   };
+                  
                   const filePath = generarPDF(datosPDF);
 
-                  //enviamos por correo
-                  /*enviarCorreoPDF(filePath, 'fran.reza@hotmail.com', function (error) {
-                    if (error) {
-                      console.log('Error al enviar el correo electrónico:', error);
-                      res.status(500).send({ mensaje: 'Error al enviar el correo electrónico' });
-                      db.detach();
-                      return;
-                    }
-                  
-                    
-                  });*/
+                  console.log(filePath);
 
                   // Enviar el PDF como respuesta al cliente
-                  res.sendFile(filePath);
+                  res.status(200).sendFile(filePath);
                   db.detach();
                 });
               }
