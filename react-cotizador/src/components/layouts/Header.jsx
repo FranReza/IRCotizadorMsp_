@@ -16,13 +16,16 @@ const Header = () => {
                     <nav>
                         <ul className="flex">
                             <li className="mr-4">
-                                <Link to={"/nuevo-cliente"}>Alta de Clientes</Link>
+                                <Link to={"/nuevo-cliente"}>Nuevo Clientes</Link>
                             </li>
                             <li className="mr-4">
                                 <Link to={"/visor-clientes"}>Ver Clientes</Link>
                             </li>
                             <li className="mr-4">
-                                <Link to={"/"}>Hacer Cotización</Link>
+                                <Link to={"/"}>Nueva Cotización</Link>
+                            </li>
+                            <li className="mr-4">
+                                <Link to={"/"}>Ver Cotizaciones</Link>
                             </li>
                         </ul>
                     </nav>
