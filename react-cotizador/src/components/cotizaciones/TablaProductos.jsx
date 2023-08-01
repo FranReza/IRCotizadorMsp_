@@ -157,7 +157,7 @@ const TablaProductos = ({ onClienteActivo }) => {
     const handleAnchoChange = (e) => {
         const value = e.target.value.trim(); // Eliminar espacios en blanco al principio y al final
 
-        if (value === '0' || value === '.') {
+       /*if (value === '0' || value === '.') {
             // Si el valor es vacío, 0 o ".", establecer el valor en 1
             setArticuloDetalle((prevDetalle) => ({
                 ...prevDetalle,
@@ -183,13 +183,35 @@ const TablaProductos = ({ onClienteActivo }) => {
                     MCUADRADO: 0,
                 }));
             }
-        }
+        }*/
+
+        /*nueva actualizacion, tiene que aceptar numeros en 
+        punto decimal y ceros.*/
+
+        const newCuadrado = (parseFloat(value) * parseFloat(articuloDetalle.ALTO)).toFixed(2);
+
+            if (!isNaN(newCuadrado)) {
+                // Si el valor es válido, actualizar el estado
+                setArticuloDetalle((prevDetalle) => ({
+                    ...prevDetalle,
+                    ANCHO: value,
+                    MCUADRADO: newCuadrado,
+                    IMPUESTOS: ((newCuadrado * prevDetalle.PRECIO) * 0.16).toFixed(2),
+                    TOTAL: (newCuadrado * prevDetalle.PRECIO).toFixed(2)
+                }));
+            } else {
+                setArticuloDetalle((prevDetalle) => ({
+                    ...prevDetalle,
+                    ANCHO: value,
+                    MCUADRADO: 0,
+                }));
+            }
     };
 
     const handleAltoChange = (e) => {
         const value = e.target.value.trim(); // Eliminar espacios en blanco al principio y al final
 
-        if (value === '0' || value === '.') {
+       /* if (value === '0' || value === '.') {
             // Si el valor es vacío, 0 o ".", establecer el valor en 1
             setArticuloDetalle((prevDetalle) => ({
                 ...prevDetalle,
@@ -215,9 +237,25 @@ const TablaProductos = ({ onClienteActivo }) => {
                     MCUADRADO: 0,
                 }));
             }
-
-
+        }*/
+        const newCuadrado = (parseFloat(value) * parseFloat(articuloDetalle.ANCHO)).toFixed(2);
+        if (!isNaN(newCuadrado)) {
+            // Si el valor es válido, actualizar el estado
+            setArticuloDetalle((prevDetalle) => ({
+                ...prevDetalle,
+                ALTO: value,
+                MCUADRADO: newCuadrado,
+                IMPUESTOS: ((newCuadrado * prevDetalle.PRECIO) * 0.16).toFixed(2),
+                TOTAL: (newCuadrado * prevDetalle.PRECIO).toFixed(2)
+            }));
+        } else {
+            setArticuloDetalle((prevDetalle) => ({
+                ...prevDetalle,
+                ALTO: value,
+                MCUADRADO: 0,
+            }));
         }
+
     };
 
     const handleCantidadChange = (e) => {
